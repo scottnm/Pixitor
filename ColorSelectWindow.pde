@@ -1,5 +1,27 @@
-class ColorSelectWindow {
-  ColorSelectWindow(int pos_x, int pos_y, int _width, int _height) {
+
+import controlP5.*;
+
+public class ColorSelectWindow{
+  ColorSelectWindow(ControlP5 cp5, int pos_x, int pos_y, int _width, int _height) {    
+    ctrl = cp5;
+    
+    PFont font = createFont("arial", 14);
+    
+    ctrl.addTextfield("R")
+      .setPosition(pos_x + 10, pos_y + 50)
+      .setSize(70, 20)
+      .setFont(font);
+      
+    ctrl.addTextfield("G")
+      .setPosition(pos_x + 10, pos_y + 100)
+      .setSize(70, 20)
+      .setFont(font);
+    
+    ctrl.addTextfield("B")
+      .setPosition(pos_x + 10, pos_y + 150)
+      .setSize(70, 20)
+      .setFont(font);
+    
     m_pos_x = pos_x;
     m_pos_y = pos_y;
     m_width = _width;
@@ -16,13 +38,6 @@ class ColorSelectWindow {
     fill(80);
     rect(0, 0, m_width, m_height);
     
-    // draw the text
-    fill(0);
-    textSize(32);
-    text("R:", 10, 80);
-    text("G:", 10, 130);
-    text("B:", 10, 180);
-    
     // color preview
     fill(m_r, m_g, m_b);
     rect(0, 0, m_width, 30);
@@ -31,12 +46,29 @@ class ColorSelectWindow {
     popStyle();
   }
   
+  void injectControlEvent(ControlEvent evt) {
+    String r_text = ctrl.get(Textfield.class, "R").getText();
+    if (r_text.equals("")) { r_text = "0"; }
+    String g_text = ctrl.get(Textfield.class, "G").getText();
+    if (g_text.equals("")) { g_text = "0"; }
+    String b_text = ctrl.get(Textfield.class, "B").getText();
+    if (b_text.equals("")) { b_text = "0"; }
+    
+    System.out.printf("R: %s\nG: %s\nB: %s\n", r_text, g_text, b_text);
+    
+    m_r = Integer.parseInt(r_text);
+    m_g = Integer.parseInt(g_text);
+    m_b = Integer.parseInt(b_text);
+  }
+    
+  ControlP5 ctrl;
+    
   int m_pos_x;
   int m_pos_y;
   int m_width;
   int m_height;
   
-  // color spec
+  // color
   int m_r;
   int m_g;
   int m_b;
