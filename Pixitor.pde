@@ -2,7 +2,7 @@ ColorSelectWindow color_select;
 
 void setup() {
   size(800, 800);
-  color_select = new ColorSelectWindow(0, 0, 200, 200);
+  color_select = new ColorSelectWindow(0, 0, 100, 200);
 }
 
 void draw() {
