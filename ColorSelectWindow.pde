@@ -63,13 +63,13 @@ public class ColorSelectWindow{
     
   ControlP5 ctrl;
     
-  int m_pos_x;
-  int m_pos_y;
-  int m_width;
-  int m_height;
+  private int m_pos_x;
+  private int m_pos_y;
+  private int m_width;
+  private int m_height;
   
   // color
-  int m_r;
-  int m_g;
-  int m_b;
+  private int m_r;
+  private int m_g;
+  private int m_b;
 }
