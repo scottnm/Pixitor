@@ -10,17 +10,23 @@ public class ColorSelectWindow{
     ctrl.addTextfield("R")
       .setPosition(pos_x + 10, pos_y + 50)
       .setSize(70, 20)
-      .setFont(font);
+      .setFont(font)
+      .setAutoClear(false)
+      .setText("0");
       
     ctrl.addTextfield("G")
       .setPosition(pos_x + 10, pos_y + 100)
       .setSize(70, 20)
-      .setFont(font);
+      .setFont(font)
+      .setAutoClear(false)
+      .setText("0");
     
     ctrl.addTextfield("B")
       .setPosition(pos_x + 10, pos_y + 150)
       .setSize(70, 20)
-      .setFont(font);
+      .setFont(font)
+      .setAutoClear(false)
+      .setText("0");
     
     m_pos_x = pos_x;
     m_pos_y = pos_y;
