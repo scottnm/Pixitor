@@ -8,8 +8,9 @@ public class CanvasWindow {
     canvasBuffer = createImage(m_width, m_height, RGB);
     canvasBuffer.loadPixels();
     for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
-      canvasBuffer.pixels[i] = color(0,0,0,0);
+      canvasBuffer.pixels[i] = color(0,0,0,1);
     }
+    canvasBuffer.updatePixels();
     
     transparencyBuffer = createImage(m_width, m_height, RGB);
     loadTransparencyGridIntoBuffer(transparencyBuffer);
@@ -22,6 +23,7 @@ public class CanvasWindow {
     pushMatrix();
     translate(m_pos_x, m_pos_y);
     image(transparencyBuffer, 0, 0);
+    image(canvasBuffer, 0, 0);
     popMatrix();
     popStyle();
   }
