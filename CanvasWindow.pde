@@ -5,6 +5,8 @@ public class CanvasWindow {
     m_width = _width;
     m_height = _height;
     
+    m_buffers = new ArrayList<PImage>();
+    
     PImage canvasBuffer = createImage(m_width, m_height, RGB);
     canvasBuffer.loadPixels();
     for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
