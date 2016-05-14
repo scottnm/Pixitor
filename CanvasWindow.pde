@@ -5,12 +5,13 @@ public class CanvasWindow {
     m_width = _width;
     m_height = _height;
     
-    canvasBuffer = createImage(m_width, m_height, RGB);
+    PImage canvasBuffer = createImage(m_width, m_height, RGB);
     canvasBuffer.loadPixels();
     for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
       canvasBuffer.pixels[i] = color(0,0,0,1);
     }
     canvasBuffer.updatePixels();
+    m_buffers.add(canvasBuffer);
     
     transparencyBuffer = createImage(m_width, m_height, RGB);
     loadTransparencyGridIntoBuffer(transparencyBuffer);
@@ -21,7 +22,7 @@ public class CanvasWindow {
     pushMatrix();
     translate(m_pos_x, m_pos_y);
     image(transparencyBuffer, 0, 0);
-    image(canvasBuffer, 0, 0);
+    image(m_buffers.get(m_buffers.size() - 1), 0, 0);
     popMatrix();
     popStyle();
   }
@@ -34,8 +35,18 @@ public class CanvasWindow {
   void paint(int x, int y, int brush_scale, color c) {
     int localx = (x - m_pos_x) / (7 * brush_scale);
     int localy = (y - m_pos_y) / (7 * brush_scale);
-    System.out.printf("painting at (%d, %d)\n", localx, localy);
-    draw7x7square(canvasBuffer, localx, localy, brush_scale, c);
+    draw7x7square(m_buffers.get(m_buffers.size() - 1),
+      localx, localy, brush_scale, c);
+  }
+  
+  void addColoredLayer(color c) {
+    PImage canvasBuffer = createImage(m_width, m_height, RGB);
+    canvasBuffer.loadPixels();
+    for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
+      canvasBuffer.pixels[i] = c;
+    }
+    canvasBuffer.updatePixels();
+    m_buffers.add(canvasBuffer);
   }
   
   private void loadTransparencyGridIntoBuffer(PImage buf) {
@@ -74,7 +85,7 @@ public class CanvasWindow {
   }
   
   private PImage transparencyBuffer;
-  private PImage canvasBuffer;
+  private ArrayList<PImage> m_buffers;
   
   private int m_pos_x;
   private int m_pos_y;

@@ -26,6 +26,10 @@ void draw() {
   canvas.drawWindow();
 }
 
+void keyPressed() {
+  canvas.addColoredLayer(color(255, 0, 0));
+}
+
 void mousePressed() {
   if (canvas.withinWindow(mouseX, mouseY)) {
     canvas.paint(mouseX, mouseY, (int)scale_slider.getValue(), color_select.getColor());
