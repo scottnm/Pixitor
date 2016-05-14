@@ -88,7 +88,7 @@ public class CanvasWindow {
     }
 
     private PImage transparencyBuffer;
-    private ArrayList<Layer> m_layers;
+    public ArrayList<Layer> m_layers;
 
     private int m_pos_x;
     private int m_pos_y;

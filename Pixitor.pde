@@ -3,6 +3,7 @@ import controlP5.*;
 ControlP5 ctrl;
 ColorSelectWindow color_select;
 CanvasWindow canvas;
+LayerSelectWindow layer_select;
 Slider scale_slider;
 Button new_layer_button;
 static color empty;
@@ -12,6 +13,7 @@ void setup() {
     ctrl = new ControlP5(this);
     color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
     canvas = new CanvasWindow(100, 0, 700, 700);
+    layer_select = new LayerSelectWindow(ctrl, canvas.m_layers, 800, 0, 100, 700);
     scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 30, 250, 40, 100)
         .showTickMarks(true)
         .snapToTickMarks(true)
@@ -28,6 +30,7 @@ void draw() {
     rect(0,0,800,700);
     color_select.drawWindow();
     canvas.drawWindow();
+    layer_select.drawWindow();
 }
 
 void mousePressed() {
