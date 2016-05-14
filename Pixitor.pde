@@ -4,6 +4,7 @@ ControlP5 ctrl;
 ColorSelectWindow color_select;
 CanvasWindow canvas;
 Slider scale_slider;
+Button new_layer_button;
 static color empty;
 
 void setup() {
@@ -11,11 +12,14 @@ void setup() {
   ctrl = new ControlP5(this);
   color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
   canvas = new CanvasWindow(100, 0, 700, 700);
-  scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 20, 200, 60, 200)
+  scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 30, 250, 40, 100)
       .showTickMarks(true)
       .snapToTickMarks(true)
       .setColorTickMark(color(0,0,0,255))
       .setNumberOfTickMarks(4);
+  new_layer_button = ctrl.addButton("New Layer")
+    .setPosition(20, 650)
+    .setId(ControllerID.NEW_LAYER_BUTTON);
   empty = color(200);
 }
 
@@ -24,10 +28,6 @@ void draw() {
   rect(0,0,800,700);
   color_select.drawWindow();
   canvas.drawWindow();
-}
-
-void keyPressed() {
-  canvas.addColoredLayer(color(255, 0, 0));
 }
 
 void mousePressed() {
@@ -50,6 +50,12 @@ void mouseDragged() {
 }
 
 void controlEvent(ControlEvent evt) {
-  color_select.injectControlEvent(evt);
-  
+  switch (evt.getController().getId()) {
+    case ControllerID.NEW_LAYER_BUTTON:
+      canvas.addColoredLayer(color(255,0,0));
+      break;
+    default:
+      color_select.injectControlEvent(evt);
+      break;
+  }
 }
