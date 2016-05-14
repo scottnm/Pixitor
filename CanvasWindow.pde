@@ -14,9 +14,7 @@ public class CanvasWindow {
     
     transparencyBuffer = createImage(m_width, m_height, RGB);
     loadTransparencyGridIntoBuffer(transparencyBuffer);
-  }
-  
-  
+  } 
   
   void drawWindow() {
     pushStyle();
@@ -26,6 +24,18 @@ public class CanvasWindow {
     image(canvasBuffer, 0, 0);
     popMatrix();
     popStyle();
+  }
+  
+  boolean withinWindow(int x, int y) {
+    return x >= m_pos_x && x <= (m_pos_x + m_width)
+      && y >= m_pos_y && y <= (m_pos_y + m_height);
+  }
+  
+  void paint(int x, int y, color c) {
+    int localx = (x - m_pos_x) / 7;
+    int localy = (y - m_pos_y) / 7;
+    System.out.printf("painting at (%d, %d)\n", localx, localy);
+    draw7x7square(canvasBuffer, localx, localy, c);
   }
   
   private void loadTransparencyGridIntoBuffer(PImage buf) {
@@ -55,7 +65,7 @@ public class CanvasWindow {
   private void draw7x7square(PImage buf, int _x, int _y, color c) {
     int ibound = (_x*7) + 7;
     int jbound = (_y*7) + 7;
-    for (int i = _x * 7; i < ibound + _x; ++i) {
+    for (int i = _x * 7; i < ibound; ++i) {
       for (int j = _y * 7; j < jbound; ++j) {
         buf.set(i, j, c);
       }

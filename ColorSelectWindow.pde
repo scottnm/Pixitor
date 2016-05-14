@@ -69,6 +69,10 @@ public class ColorSelectWindow{
     m_g = Integer.parseInt(g_text);
     m_b = Integer.parseInt(b_text);
   }
+  
+  color getColor() {
+    return color(m_r, m_g, m_b);
+  }
     
   ControlP5 ctrl;
     
