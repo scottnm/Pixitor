@@ -62,9 +62,7 @@ public class ColorSelectWindow{
     if (g_text.equals("")) { g_text = "0"; }
     String b_text = ctrl.get(Textfield.class, "B").getText();
     if (b_text.equals("")) { b_text = "0"; }
-    
-    System.out.printf("R: %s\nG: %s\nB: %s\n", r_text, g_text, b_text);
-    
+
     m_r = Integer.parseInt(r_text);
     m_g = Integer.parseInt(g_text);
     m_b = Integer.parseInt(b_text);

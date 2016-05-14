@@ -10,6 +10,11 @@ void setup() {
   ctrl = new ControlP5(this);
   color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
   canvas = new CanvasWindow(100, 0, 700, 700);
+  ctrl.addSlider("Scale", 1, 4, 1, 20, 200, 60, 200)
+      .showTickMarks(true)
+      .snapToTickMarks(true)
+      .setColorTickMark(color(0,0,0,255))
+      .setNumberOfTickMarks(4);
   empty = color(200);
 }
 
@@ -41,4 +46,5 @@ void mouseDragged() {
 
 void controlEvent(ControlEvent evt) {
   color_select.injectControlEvent(evt);
+  
 }
