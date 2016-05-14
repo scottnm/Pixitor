@@ -31,11 +31,11 @@ public class CanvasWindow {
       && y >= m_pos_y && y <= (m_pos_y + m_height);
   }
   
-  void paint(int x, int y, color c) {
-    int localx = (x - m_pos_x) / 7;
-    int localy = (y - m_pos_y) / 7;
+  void paint(int x, int y, int brush_scale, color c) {
+    int localx = (x - m_pos_x) / (7 * brush_scale);
+    int localy = (y - m_pos_y) / (7 * brush_scale);
     System.out.printf("painting at (%d, %d)\n", localx, localy);
-    draw7x7square(canvasBuffer, localx, localy, c);
+    draw7x7square(canvasBuffer, localx, localy, brush_scale, c);
   }
   
   private void loadTransparencyGridIntoBuffer(PImage buf) {
@@ -52,21 +52,22 @@ public class CanvasWindow {
       }
       
       for(int j = 0; j < 100; j+=2) {
-        draw7x7square(buf, i, j, onColor);
+        draw7x7square(buf, i, j, 1, onColor);
       }
       
       for(int j = 1; j < 100; j+=2) {
-        draw7x7square(buf, i, j, offColor);
+        draw7x7square(buf, i, j, 1, offColor);
       }
       
     }
   }
   
-  private void draw7x7square(PImage buf, int _x, int _y, color c) {
-    int ibound = (_x*7) + 7;
-    int jbound = (_y*7) + 7;
-    for (int i = _x * 7; i < ibound; ++i) {
-      for (int j = _y * 7; j < jbound; ++j) {
+  private void draw7x7square(PImage buf, int _x, int _y, int _scale, color c) {
+    int gridlock = 7 * _scale;
+    int ibound = (_x * gridlock) + gridlock;
+    int jbound = (_y * gridlock) + gridlock;
+    for (int i = _x * gridlock; i < ibound; ++i) {
+      for (int j = _y * gridlock; j < jbound; ++j) {
         buf.set(i, j, c);
       }
     }

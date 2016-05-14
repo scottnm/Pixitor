@@ -22,7 +22,7 @@ void draw() {
 
 void mousePressed() {
   if (canvas.withinWindow(mouseX, mouseY)) {
-    canvas.paint(mouseX, mouseY, color_select.getColor());
+    canvas.paint(mouseX, mouseY, 1, color_select.getColor());
   }
 }
 
@@ -34,7 +34,7 @@ void mouseDragged() {
     for(int r = 1; r <= 20; ++r) {
       int xt = ((del_x * r) / 20) + (pmouseX);
       int yt = ((del_y * r) / 20) + (pmouseY);
-      canvas.paint(xt, yt, c);
+      canvas.paint(xt, yt, 1, c);
     }
   }
 }
