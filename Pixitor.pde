@@ -3,6 +3,7 @@ import controlP5.*;
 ControlP5 ctrl;
 ColorSelectWindow color_select;
 CanvasWindow canvas;
+Slider scale_slider;
 static color empty;
 
 void setup() {
@@ -10,7 +11,7 @@ void setup() {
   ctrl = new ControlP5(this);
   color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
   canvas = new CanvasWindow(100, 0, 700, 700);
-  ctrl.addSlider("Scale", 1, 4, 1, 20, 200, 60, 200)
+  scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 20, 200, 60, 200)
       .showTickMarks(true)
       .snapToTickMarks(true)
       .setColorTickMark(color(0,0,0,255))
@@ -27,7 +28,7 @@ void draw() {
 
 void mousePressed() {
   if (canvas.withinWindow(mouseX, mouseY)) {
-    canvas.paint(mouseX, mouseY, 1, color_select.getColor());
+    canvas.paint(mouseX, mouseY, (int)scale_slider.getValue(), color_select.getColor());
   }
 }
 
@@ -39,7 +40,7 @@ void mouseDragged() {
     for(int r = 1; r <= 20; ++r) {
       int xt = ((del_x * r) / 20) + (pmouseX);
       int yt = ((del_y * r) / 20) + (pmouseY);
-      canvas.paint(xt, yt, 1, c);
+      canvas.paint(xt, yt, (int)scale_slider.getValue(), c);
     }
   }
 }
