@@ -50,6 +50,10 @@ public class LayerSelectWindow {
         popStyle();
     }
 
+    void onNewLayer() {
+        m_scroll_down_disabled = m_layers.size() <= 4;
+    }
+
     ControlP5 m_ctrl;
     ArrayList<Layer> m_layers;
   

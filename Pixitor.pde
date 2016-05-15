@@ -56,6 +56,7 @@ void controlEvent(ControlEvent evt) {
     switch (evt.getController().getId()) {
         case ButtonID.NEW_LAYER:
             canvas.addColoredLayer(color_select.getColor());
+            layer_select.onNewLayer();
             break;
         default:
             color_select.injectControlEvent(evt);
