@@ -37,6 +37,15 @@ public class LayerSelectWindow {
         translate(m_pos_x, m_pos_y);
         fill(255);
         rect(0, 0, m_width, m_height);
+
+        fill(255, 0, 0);
+        int num_layers = m_layers.size();
+        for(int i = 0; i < 4 && i < num_layers; ++i) {
+           pushMatrix();
+           translate(0, m_height * (i * .225 + 0.05));
+           rect(0, 0, m_width, m_height * .225);
+           popMatrix();
+        }
         popMatrix();
         popStyle();
     }
