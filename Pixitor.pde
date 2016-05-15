@@ -21,7 +21,7 @@ void setup() {
         .setNumberOfTickMarks(4);
     new_layer_button = ctrl.addButton("New Layer")
         .setPosition(20, 650)
-        .setId(ControllerID.NEW_LAYER_BUTTON);
+        .setId(ButtonID.NEW_LAYER);
     empty = color(200);
 }
 
