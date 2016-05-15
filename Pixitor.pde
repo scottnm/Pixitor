@@ -54,8 +54,8 @@ void mouseDragged() {
 
 void controlEvent(ControlEvent evt) {
     switch (evt.getController().getId()) {
-        case ControllerID.NEW_LAYER_BUTTON:
-            canvas.addColoredLayer(color(255,0,0));
+        case ButtonID.NEW_LAYER:
+            canvas.addColoredLayer(color_select.getColor());
             break;
         default:
             color_select.injectControlEvent(evt);
