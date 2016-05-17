@@ -58,6 +58,12 @@ void controlEvent(ControlEvent evt) {
             canvas.addColoredLayer(color_select.getColor());
             layer_select.onNewLayer();
             break;
+        case ButtonID.SCROLL_LAYER_SCROLL_UP:
+            layer_select.onLayerScrollUp();
+            break;
+        case ButtonID.SCROLL_LAYER_SCROLL_DOWN:
+            layer_select.onLayerScrollDown();
+            break;
         default:
             color_select.injectControlEvent(evt);
             break;

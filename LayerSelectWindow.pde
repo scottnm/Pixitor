@@ -9,49 +9,102 @@ public class LayerSelectWindow {
         m_width = _width;
         m_height = _height;
 
+        m_disabled_color = color(100, 100, 100, 100);
+        m_enabled_active_color = color(0, 170, 255);
+        m_enabled_bg_color = color(0, 45, 90);
+        m_enabled_fg_color = color(0, 116, 217);
+
         m_scroll_up_disabled = true;
         m_scroll_down_disabled = m_layers.size() <= 4;
 
         m_scroll_up_button = m_ctrl.addButton("^")
             .setPosition(m_pos_x, m_pos_y)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SELECT_UP);
+            .setId(ButtonID.SCROLL_LAYER_SCROLL_UP)
+            .setColorBackground(m_disabled_color)
+            .setColorActive(m_disabled_color)
+            .setColorForeground(m_disabled_color);
 
         m_scroll_down_button = m_ctrl.addButton("v")
             .setPosition(m_pos_x, m_pos_y + m_height * 0.95)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SELECT_DOWN);
+            .setId(ButtonID.SCROLL_LAYER_SCROLL_DOWN)
+            .setColorBackground(m_disabled_color)
+            .setColorActive(m_disabled_color)
+            .setColorForeground(m_disabled_color);
 
-        m_enabled_color = m_scroll_up_button.getColor().getBackground();
-        m_disabled_color = color(100, 100, 100, 100);
+        m_top_layer_index = 0;
     }
 
     void drawWindow() {
-        m_scroll_up_button.setLock(m_scroll_up_disabled);
-        m_scroll_up_button.setColorBackground(m_scroll_up_disabled ? m_disabled_color : m_enabled_color);
-        m_scroll_down_button.setLock(m_scroll_down_disabled);
-        m_scroll_down_button.setColorBackground(m_scroll_down_disabled ? m_disabled_color : m_enabled_color);
-
         pushStyle();
         pushMatrix();
         translate(m_pos_x, m_pos_y);
         fill(255);
         rect(0, 0, m_width, m_height);
 
-        fill(255, 0, 0);
         int num_layers = m_layers.size();
-        for(int i = 0; i < 4 && i < num_layers; ++i) {
-           pushMatrix();
-           translate(0, m_height * (i * .225 + 0.05));
-           rect(0, 0, m_width, m_height * .225);
-           popMatrix();
+        for(int i = 0; i < 4 && i + m_top_layer_index < num_layers; ++i) {
+            pushStyle();
+            pushMatrix();
+            color _c = m_layers.get(i + m_top_layer_index).m_image.get(0, 0);
+            color c = color(red(_c), green(_c), blue(_c));
+            fill(c);
+            translate(0, m_height * (i * .225 + 0.05));
+            rect(0, 0, m_width, m_height * .225);
+            popMatrix();
+            popStyle();
         }
         popMatrix();
         popStyle();
     }
 
     void onNewLayer() {
-        m_scroll_down_disabled = m_layers.size() <= 4;
+        updateScrollButtons();
+    }
+
+    void onLayerScrollUp() {
+        if (m_scroll_up_disabled) {
+            return;
+        }
+        --m_top_layer_index;
+        updateScrollButtons();
+    }
+
+    void onLayerScrollDown() {
+        if (m_scroll_down_disabled) {
+            return;
+        }
+        ++m_top_layer_index;
+        updateScrollButtons();
+    }
+
+    void updateScrollButtons() {
+        if (m_top_layer_index == 0) {
+            m_scroll_up_disabled = true;
+            m_scroll_up_button.setColorBackground(m_disabled_color);
+            m_scroll_up_button.setColorActive(m_disabled_color);
+            m_scroll_up_button.setColorForeground(m_disabled_color);
+        }
+        else {
+            m_scroll_up_disabled = false;
+            m_scroll_up_button.setColorBackground(m_enabled_bg_color);
+            m_scroll_up_button.setColorActive(m_enabled_active_color);
+            m_scroll_up_button.setColorForeground(m_enabled_fg_color);
+        }
+
+        if (((m_layers.size() - 1) - m_top_layer_index) < 4) {
+            m_scroll_down_disabled = true;
+            m_scroll_down_button.setColorBackground(m_disabled_color);
+            m_scroll_down_button.setColorActive(m_disabled_color);
+            m_scroll_down_button.setColorForeground(m_disabled_color);
+        }
+        else {
+            m_scroll_down_disabled = false;
+            m_scroll_down_button.setColorBackground(m_enabled_bg_color);
+            m_scroll_down_button.setColorActive(m_enabled_active_color);
+            m_scroll_down_button.setColorForeground(m_enabled_fg_color);
+        }
     }
 
     ControlP5 m_ctrl;
@@ -66,6 +119,10 @@ public class LayerSelectWindow {
     boolean m_scroll_up_disabled;
     Button m_scroll_down_button;
     boolean m_scroll_down_disabled;
-    color m_enabled_color;
+    color m_enabled_bg_color;
+    color m_enabled_active_color;
+    color m_enabled_fg_color;
     color m_disabled_color;
+
+    int m_top_layer_index;
 }
