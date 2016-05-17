@@ -114,6 +114,25 @@ public class LayerSelectWindow {
             && y < (m_pos_y + m_height - m_scroll_down_button.getHeight());
     }
 
+    int getLayerAt(int y) {
+        final int inner_window_height = m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight();
+
+        int ly = (y - m_pos_y) - m_scroll_up_button.getHeight();
+        int lsize = m_layers.size();
+        if (ly < inner_window_height / 4) {
+            return lsize >= 1 ? m_top_layer_index : -1;
+        }
+        else if (ly < inner_window_height / 2) {
+            return lsize >= 2 ? m_top_layer_index + 1 : -1;
+        }
+        else if (ly < inner_window_height * 0.75) {
+            return lsize >= 3 ? m_top_layer_index + 2 : -1;
+        }
+        else {
+            return lsize >= 4 ? m_top_layer_index + 3 : -1;
+        }
+    }
+
     ControlP5 m_ctrl;
     ArrayList<Layer> m_layers;
   
