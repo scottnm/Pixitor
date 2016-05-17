@@ -6,6 +6,7 @@ public class CanvasWindow {
         m_height = _height;
 
         m_layers = new ArrayList<Layer>();
+        m_active_layer = 0;
 
         PImage canvasBuffer = createImage(m_width, m_height, RGB);
         canvasBuffer.loadPixels();
@@ -39,7 +40,7 @@ public class CanvasWindow {
     void paint(int x, int y, int brush_scale, color c) {
         int localx = (x - m_pos_x) / (7 * brush_scale);
         int localy = (y - m_pos_y) / (7 * brush_scale);
-        draw7x7square(m_layers.get(m_layers.size() - 1).m_image,
+        draw7x7square(m_layers.get(m_active_layer).m_image,
             localx, localy, brush_scale, c);
     }
 
@@ -89,6 +90,7 @@ public class CanvasWindow {
 
     private PImage transparencyBuffer;
     public ArrayList<Layer> m_layers;
+    public int m_active_layer;
 
     private int m_pos_x;
     private int m_pos_y;

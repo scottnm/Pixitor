@@ -107,6 +107,13 @@ public class LayerSelectWindow {
         }
     }
 
+    boolean withinWindow(int x, int y) {
+        return x >= m_pos_x
+            && x < (m_pos_x + m_width)
+            && y >= (m_pos_y + m_scroll_up_button.getHeight())
+            && y < (m_pos_y + m_height - m_scroll_down_button.getHeight());
+    }
+
     ControlP5 m_ctrl;
     ArrayList<Layer> m_layers;
   

@@ -37,6 +37,15 @@ void mousePressed() {
     if (canvas.withinWindow(mouseX, mouseY)) {
         canvas.paint(mouseX, mouseY, (int)scale_slider.getValue(), color_select.getColor());
     }
+    else if (layer_select.withinWindow(mouseX, mouseY)) {
+            /*
+        int layer = layer_select.getLayerAt(mouseX, mouseY);
+        if (layer != -1) {
+            canvas.m_active_layer = layer;
+        }
+        */
+            println("within");
+    }
 }
 
 void mouseDragged() {
