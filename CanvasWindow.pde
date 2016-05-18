@@ -27,7 +27,9 @@ public class CanvasWindow {
         translate(m_pos_x, m_pos_y);
         image(transparencyBuffer, 0, 0);
         for(Layer l : m_layers) {
-            image(l.m_image, 0, 0);
+            if (l.m_visible.getState()) {
+                image(l.m_image, 0, 0);
+            }
         }
         popMatrix();
         popStyle();
