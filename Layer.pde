@@ -1,9 +1,11 @@
+import controlP5.*;
+
 public class Layer {
-    Layer(PImage image) {
+    Layer(ControlP5 ctrl, PImage image) {
+        m_visible = ctrl.addToggle(CheckboxNameGenerator.getNextId());
         m_image = image;
-        m_visible = true;
     }
 
+    Toggle m_visible;
     PImage m_image;
-    boolean m_visible;
 }

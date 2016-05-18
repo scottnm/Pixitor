@@ -12,7 +12,7 @@ void setup() {
     size(900, 700);
     ctrl = new ControlP5(this);
     color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
-    canvas = new CanvasWindow(100, 0, 700, 700);
+    canvas = new CanvasWindow(ctrl, 100, 0, 700, 700);
     layer_select = new LayerSelectWindow(ctrl, canvas.m_layers, 800, 0, 100, 700);
     scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 30, 250, 40, 100)
         .showTickMarks(true)
@@ -59,6 +59,9 @@ void mouseDragged() {
 }
 
 void controlEvent(ControlEvent evt) {
+    if (!evt.isController()) {
+        return;
+    }
     switch (evt.getController().getId()) {
         case ButtonID.NEW_LAYER:
             canvas.addColoredLayer(color_select.getColor());

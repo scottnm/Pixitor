@@ -34,6 +34,7 @@ public class LayerSelectWindow {
             .setColorForeground(m_disabled_color);
 
         m_top_layer_index = 0;
+        onNewLayer();
     }
 
     void drawWindow() {
@@ -60,7 +61,13 @@ public class LayerSelectWindow {
     }
 
     void onNewLayer() {
+        // 1/5 of the size of a single layer window
         updateScrollButtons();
+
+        final int size = (m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight()) / 40;
+        m_layers.get(m_layers.size() - 1).m_visible.setSize(size, size);
+
+        updateToggles();
     }
 
     void onLayerScrollUp() {
@@ -69,6 +76,7 @@ public class LayerSelectWindow {
         }
         --m_top_layer_index;
         updateScrollButtons();
+        updateToggles();
     }
 
     void onLayerScrollDown() {
@@ -77,6 +85,7 @@ public class LayerSelectWindow {
         }
         ++m_top_layer_index;
         updateScrollButtons();
+        updateToggles();
     }
 
     void updateScrollButtons() {
@@ -104,6 +113,29 @@ public class LayerSelectWindow {
             m_scroll_down_button.setColorBackground(m_enabled_bg_color);
             m_scroll_down_button.setColorActive(m_enabled_active_color);
             m_scroll_down_button.setColorForeground(m_enabled_fg_color);
+        }
+    }
+
+    void updateToggles() {
+        for(int i = 0; i < m_top_layer_index; ++i) {
+            m_layers.get(i).m_visible.hide();
+        }
+
+        final int offset = m_pos_y + m_scroll_up_button.getHeight();
+        final int layer_window_height = (m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight()) / 4;
+        final int cbx = m_pos_x + (int)(m_width * 0.1);
+
+        int i;
+        for(i = m_top_layer_index; i < m_layers.size() && i < m_top_layer_index + 4; ++i) {
+            Toggle tgl = m_layers.get(i).m_visible;
+            tgl.show();
+            int index_in_window = i - m_top_layer_index;
+            int cby = offset + (int)((layer_window_height * index_in_window) + (0.5 * layer_window_height) - tgl.getHeight() / 2);
+            tgl.setPosition(cbx, cby);
+        }
+
+        for(; i < m_layers.size(); ++i) {
+            m_layers.get(i).m_visible.hide();
         }
     }
 

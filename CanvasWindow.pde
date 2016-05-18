@@ -1,5 +1,6 @@
 public class CanvasWindow {
-    CanvasWindow(int pos_x, int pos_y, int _width, int _height) {
+    CanvasWindow(ControlP5 ctrl, int pos_x, int pos_y, int _width, int _height) {
+        m_ctrl = ctrl;
         m_pos_x = pos_x;
         m_pos_y = pos_y;
         m_width = _width;
@@ -14,7 +15,7 @@ public class CanvasWindow {
             canvasBuffer.pixels[i] = color(0,0,0,1);
         }
         canvasBuffer.updatePixels();
-        m_layers.add(new Layer(canvasBuffer));
+        m_layers.add(new Layer(m_ctrl, canvasBuffer));
 
         transparencyBuffer = createImage(m_width, m_height, RGB);
         loadTransparencyGridIntoBuffer(transparencyBuffer);
@@ -51,7 +52,7 @@ public class CanvasWindow {
             canvasBuffer.pixels[i] = c;
         }
         canvasBuffer.updatePixels();
-        m_layers.add(new Layer(canvasBuffer));
+        m_layers.add(new Layer(m_ctrl, canvasBuffer));
     }
 
     private void loadTransparencyGridIntoBuffer(PImage buf) {
@@ -88,6 +89,7 @@ public class CanvasWindow {
         }
     }
 
+    private ControlP5 m_ctrl;
     private PImage transparencyBuffer;
     public ArrayList<Layer> m_layers;
     public int m_active_layer;
