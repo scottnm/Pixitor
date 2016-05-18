@@ -43,18 +43,13 @@ public class LayerSelectWindow {
         translate(m_pos_x, m_pos_y);
         fill(255);
         rect(0, 0, m_width, m_height);
-
         int num_layers = m_layers.size();
         for(int i = 0; i < 4 && i + m_top_layer_index < num_layers; ++i) {
-            pushStyle();
             pushMatrix();
-            color _c = m_layers.get(i + m_top_layer_index).m_image.get(0, 0);
-            color c = color(red(_c), green(_c), blue(_c));
-            fill(c);
             translate(0, m_height * (i * .225 + 0.05));
-            rect(0, 0, m_width, m_height * .225);
+            image(m_layers.get(i + m_top_layer_index).m_image,
+                    0, 0, m_width, m_height * .225);
             popMatrix();
-            popStyle();
         }
         popMatrix();
         popStyle();
