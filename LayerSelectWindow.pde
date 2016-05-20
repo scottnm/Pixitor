@@ -121,6 +121,11 @@ public class LayerSelectWindow {
     }
 
     boolean withinWindow(int x, int y) {
+        for(Layer l : m_layers) {
+            if (l.withinCheckbox(x, y)) {
+                return false;
+            }
+        }
         return x >= m_pos_x
             && x < (m_pos_x + m_width)
             && y >= (m_pos_y + m_scroll_up_btn.getHeight())
