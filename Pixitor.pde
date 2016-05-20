@@ -41,6 +41,7 @@ void mousePressed() {
         int layer = layer_select.getLayerAt(mouseY);
         if (layer != -1) {
             canvas.m_active_layer = layer;
+            layer_select.m_active_layer = layer;
         }
     }
 }

@@ -9,31 +9,30 @@ public class LayerSelectWindow {
         m_width = _width;
         m_height = _height;
 
-        m_disabled_color = color(100, 100, 100, 100);
-        m_enabled_active_color = color(0, 170, 255);
-        m_enabled_bg_color = color(0, 45, 90);
-        m_enabled_fg_color = color(0, 116, 217);
+        m_scroll_colors = new ControlP5ColorSet(
+                    color(0, 45, 90), color(0, 116, 217), color(0, 170, 255),
+                    color(100, 100), color(100, 100), color(100, 100)
+                );
 
-        m_scroll_up_disabled = true;
-        m_scroll_down_disabled = m_layers.size() <= 4;
+        m_toggle_colors = new ControlP5ColorSet(
+                    color(86, 90, 0), color(210, 217, 0), color(255, 255, 0),
+                    color(0, 45, 90), color(0, 116, 217), color(0, 170, 255)
+                );
 
-        m_scroll_up_button = m_ctrl.addButton("^")
+        m_scroll_up_btn = m_ctrl.addButton("^")
             .setPosition(m_pos_x, m_pos_y)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SCROLL_UP)
-            .setColorBackground(m_disabled_color)
-            .setColorActive(m_disabled_color)
-            .setColorForeground(m_disabled_color);
+            .setId(ButtonID.SCROLL_LAYER_SCROLL_UP);
+        m_scroll_colors.assignColorsToController(m_scroll_up_btn, false);
 
-        m_scroll_down_button = m_ctrl.addButton("v")
+        m_scroll_down_btn = m_ctrl.addButton("v")
             .setPosition(m_pos_x, m_pos_y + m_height * 0.95)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SCROLL_DOWN)
-            .setColorBackground(m_disabled_color)
-            .setColorActive(m_disabled_color)
-            .setColorForeground(m_disabled_color);
+            .setId(ButtonID.SCROLL_LAYER_SCROLL_DOWN);
+        m_scroll_colors.assignColorsToController(m_scroll_down_btn, false);
 
         m_top_layer_index = 0;
+        m_active_layer = 0;
         onNewLayer();
     }
 
@@ -51,6 +50,9 @@ public class LayerSelectWindow {
             int h_offset = (int)(m_height * (i * 0.225 + 0.1625) - scaled_height * 0.5);
             translate(0, h_offset);
             image(preview_img, 0, 0, m_width, scaled_height);
+            Toggle layer_tgl = m_layers.get(i + m_top_layer_index).m_visible;
+            boolean this_layer_active = i + m_top_layer_index == m_active_layer;
+            m_toggle_colors.assignColorsToController(layer_tgl, this_layer_active);
             popMatrix();
         }
         popMatrix();
@@ -61,14 +63,14 @@ public class LayerSelectWindow {
         // 1/5 of the size of a single layer window
         updateScrollButtons();
 
-        final int size = (m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight()) / 40;
+        final int size = (m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight()) / 40;
         m_layers.get(m_layers.size() - 1).m_visible.setSize(size, size);
 
         updateToggles();
     }
 
     void onLayerScrollUp() {
-        if (m_scroll_up_disabled) {
+        if (!m_scroll_up_enabled) {
             return;
         }
         --m_top_layer_index;
@@ -77,7 +79,7 @@ public class LayerSelectWindow {
     }
 
     void onLayerScrollDown() {
-        if (m_scroll_down_disabled) {
+        if (!m_scroll_down_enabled) {
             return;
         }
         ++m_top_layer_index;
@@ -86,31 +88,13 @@ public class LayerSelectWindow {
     }
 
     void updateScrollButtons() {
-        if (m_top_layer_index == 0) {
-            m_scroll_up_disabled = true;
-            m_scroll_up_button.setColorBackground(m_disabled_color);
-            m_scroll_up_button.setColorActive(m_disabled_color);
-            m_scroll_up_button.setColorForeground(m_disabled_color);
-        }
-        else {
-            m_scroll_up_disabled = false;
-            m_scroll_up_button.setColorBackground(m_enabled_bg_color);
-            m_scroll_up_button.setColorActive(m_enabled_active_color);
-            m_scroll_up_button.setColorForeground(m_enabled_fg_color);
-        }
+        m_scroll_up_enabled = m_top_layer_index != 0;
+        m_scroll_colors.assignColorsToController(m_scroll_up_btn,
+                m_scroll_up_enabled);
 
-        if (((m_layers.size() - 1) - m_top_layer_index) < 4) {
-            m_scroll_down_disabled = true;
-            m_scroll_down_button.setColorBackground(m_disabled_color);
-            m_scroll_down_button.setColorActive(m_disabled_color);
-            m_scroll_down_button.setColorForeground(m_disabled_color);
-        }
-        else {
-            m_scroll_down_disabled = false;
-            m_scroll_down_button.setColorBackground(m_enabled_bg_color);
-            m_scroll_down_button.setColorActive(m_enabled_active_color);
-            m_scroll_down_button.setColorForeground(m_enabled_fg_color);
-        }
+        m_scroll_down_enabled = ((m_layers.size() - 1) - m_top_layer_index) >= 4;
+        m_scroll_colors.assignColorsToController(m_scroll_down_btn,
+                m_scroll_down_enabled);
     }
 
     void updateToggles() {
@@ -118,8 +102,8 @@ public class LayerSelectWindow {
             m_layers.get(i).m_visible.hide();
         }
 
-        final int offset = m_pos_y + m_scroll_up_button.getHeight();
-        final int layer_window_height = (m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight()) / 4;
+        final int offset = m_pos_y + m_scroll_up_btn.getHeight();
+        final int layer_window_height = (m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight()) / 4;
         final int cbx = m_pos_x + (int)(m_width * 0.1);
 
         int i;
@@ -139,14 +123,14 @@ public class LayerSelectWindow {
     boolean withinWindow(int x, int y) {
         return x >= m_pos_x
             && x < (m_pos_x + m_width)
-            && y >= (m_pos_y + m_scroll_up_button.getHeight())
-            && y < (m_pos_y + m_height - m_scroll_down_button.getHeight());
+            && y >= (m_pos_y + m_scroll_up_btn.getHeight())
+            && y < (m_pos_y + m_height - m_scroll_down_btn.getHeight());
     }
 
     int getLayerAt(int y) {
-        final int inner_window_height = m_height - m_scroll_up_button.getHeight() - m_scroll_down_button.getHeight();
+        final int inner_window_height = m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight();
 
-        int ly = (y - m_pos_y) - m_scroll_up_button.getHeight();
+        int ly = (y - m_pos_y) - m_scroll_up_btn.getHeight();
         int lsize = m_layers.size();
         if (ly < inner_window_height / 4) {
             return lsize >= 1 ? m_top_layer_index : -1;
@@ -170,14 +154,14 @@ public class LayerSelectWindow {
     int m_width;
     int m_height;
 
-    Button m_scroll_up_button;
-    boolean m_scroll_up_disabled;
-    Button m_scroll_down_button;
-    boolean m_scroll_down_disabled;
-    color m_enabled_bg_color;
-    color m_enabled_active_color;
-    color m_enabled_fg_color;
-    color m_disabled_color;
+    Button m_scroll_up_btn;
+    boolean m_scroll_up_enabled;
+    Button m_scroll_down_btn;
+    boolean m_scroll_down_enabled;
+
+    ControlP5ColorSet m_scroll_colors;
+    ControlP5ColorSet m_toggle_colors;
 
     int m_top_layer_index;
+    int m_active_layer;
 }
