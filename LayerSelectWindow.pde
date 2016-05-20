@@ -47,8 +47,9 @@ public class LayerSelectWindow {
         for(int i = 0; i < 4 && i + m_top_layer_index < num_layers; ++i) {
             pushMatrix();
             translate(0, m_height * (i * .225 + 0.05));
-            image(m_layers.get(i + m_top_layer_index).m_image,
-                    0, 0, m_width, m_height * .225);
+            PImage preview_img = m_layers.get(i + m_top_layer_index).m_image;
+            int scaled_height = m_width * preview_img.height / preview_img.width;
+            image(preview_img, 0, 0, m_width, scaled_height);
             popMatrix();
         }
         popMatrix();
