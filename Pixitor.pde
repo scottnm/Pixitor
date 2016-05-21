@@ -6,6 +6,7 @@ CanvasWindow canvas;
 LayerSelectWindow layer_select;
 Slider scale_slider;
 Button new_layer_button;
+Toggle grid_line_toggle;
 static color empty;
 
 void setup() {
@@ -23,6 +24,11 @@ void setup() {
     new_layer_button = ctrl.addButton("New Layer")
         .setPosition(20, 650)
         .setId(ControllerID.NEW_LAYER);
+    grid_line_toggle = ctrl.addToggle("Grid")
+        .setSize(15, 15)
+        .setState(true)
+        .setPosition(43, 500)
+        .setId(ControllerID.TOGGLE_GRID);
     empty = color(200);
 }
 
@@ -78,6 +84,9 @@ void controlEvent(ControlEvent evt) {
         case ControllerID.SCALE_SLIDER:
             canvas.m_brush_scale = (int)(scale_slider.getValue());
             canvas.updateGridLines();
+            break;
+        case ControllerID.TOGGLE_GRID:
+            canvas.m_grid_active = grid_line_toggle.getState();
             break;
         default:
             color_select.injectControlEvent(evt);

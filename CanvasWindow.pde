@@ -24,6 +24,7 @@ public class CanvasWindow {
 
         m_grid_buf = createImage(m_width, m_height, RGB);        
         updateGridLines();
+        m_grid_active = true;
     } 
 
     void drawWindow() {
@@ -36,7 +37,9 @@ public class CanvasWindow {
                 image(l.m_image, 0, 0);
             }
         }
-        image(m_grid_buf, 0, 0);
+        if (m_grid_active) {
+            image(m_grid_buf, 0, 0);
+        }
         popMatrix();
         popStyle();
     }
@@ -119,6 +122,7 @@ public class CanvasWindow {
     private ControlP5 m_ctrl;
     private PImage m_transparency_buf;
     private PImage m_grid_buf;
+    public boolean m_grid_active;
     public ArrayList<Layer> m_layers;
     public int m_active_layer;
     public int m_brush_scale;
