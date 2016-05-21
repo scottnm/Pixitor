@@ -9,6 +9,8 @@ public class CanvasWindow {
         m_layers = new ArrayList<Layer>();
         m_active_layer = 0;
 
+        m_brush_scale = 1;
+
         PImage canvasBuffer = createImage(m_width, m_height, RGB);
         canvasBuffer.loadPixels();
         for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
@@ -34,17 +36,17 @@ public class CanvasWindow {
         popMatrix();
         popStyle();
     }
-
+    
     boolean withinWindow(int x, int y) {
         return x >= m_pos_x && x <= (m_pos_x + m_width)
             && y >= m_pos_y && y <= (m_pos_y + m_height);
     }
 
-    void paint(int x, int y, int brush_scale, color c) {
-        int localx = (x - m_pos_x) / (7 * brush_scale);
-        int localy = (y - m_pos_y) / (7 * brush_scale);
+    void paint(int x, int y, color c) {
+        int localx = (x - m_pos_x) / (7 * m_brush_scale);
+        int localy = (y - m_pos_y) / (7 * m_brush_scale);
         draw7x7square(m_layers.get(m_active_layer).m_image,
-            localx, localy, brush_scale, c);
+            localx, localy, m_brush_scale, c);
     }
 
     void addColoredLayer(color c) {
@@ -95,6 +97,7 @@ public class CanvasWindow {
     private PImage transparencyBuffer;
     public ArrayList<Layer> m_layers;
     public int m_active_layer;
+    public int m_brush_scale;
 
     private int m_pos_x;
     private int m_pos_y;

@@ -22,13 +22,13 @@ public class LayerSelectWindow {
         m_scroll_up_btn = m_ctrl.addButton("^")
             .setPosition(m_pos_x, m_pos_y)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SCROLL_UP);
+            .setId(ControllerID.SCROLL_LAYER_SCROLL_UP);
         m_scroll_colors.assignColorsToController(m_scroll_up_btn, false);
 
         m_scroll_down_btn = m_ctrl.addButton("v")
             .setPosition(m_pos_x, m_pos_y + m_height * 0.95)
             .setSize(m_width, (int)(m_height * 0.05))
-            .setId(ButtonID.SCROLL_LAYER_SCROLL_DOWN);
+            .setId(ControllerID.SCROLL_LAYER_SCROLL_DOWN);
         m_scroll_colors.assignColorsToController(m_scroll_down_btn, false);
 
         m_top_layer_index = 0;

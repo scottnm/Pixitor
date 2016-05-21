@@ -18,10 +18,11 @@ void setup() {
         .showTickMarks(true)
         .snapToTickMarks(true)
         .setColorTickMark(color(0,0,0,255))
-        .setNumberOfTickMarks(4);
+        .setNumberOfTickMarks(4)
+        .setId(ControllerID.SCALE_SLIDER);
     new_layer_button = ctrl.addButton("New Layer")
         .setPosition(20, 650)
-        .setId(ButtonID.NEW_LAYER);
+        .setId(ControllerID.NEW_LAYER);
     empty = color(200);
 }
 
@@ -35,7 +36,7 @@ void draw() {
 
 void mousePressed() {
     if (canvas.withinWindow(mouseX, mouseY)) {
-        canvas.paint(mouseX, mouseY, (int)scale_slider.getValue(), color_select.getColor());
+        canvas.paint(mouseX, mouseY, color_select.getColor());
     }
     else if (layer_select.withinWindow(mouseX, mouseY)) {
         int layer = layer_select.getLayerAt(mouseY);
@@ -54,7 +55,7 @@ void mouseDragged() {
         for(int r = 1; r <= 20; ++r) {
             int xt = ((del_x * r) / 20) + (pmouseX);
             int yt = ((del_y * r) / 20) + (pmouseY);
-            canvas.paint(xt, yt, (int)scale_slider.getValue(), c);
+            canvas.paint(xt, yt, c);
         }
     }
 }
@@ -64,15 +65,18 @@ void controlEvent(ControlEvent evt) {
         return;
     }
     switch (evt.getController().getId()) {
-        case ButtonID.NEW_LAYER:
+        case ControllerID.NEW_LAYER:
             canvas.addColoredLayer(color_select.getColor());
             layer_select.onNewLayer();
             break;
-        case ButtonID.SCROLL_LAYER_SCROLL_UP:
+        case ControllerID.SCROLL_LAYER_SCROLL_UP:
             layer_select.onLayerScrollUp();
             break;
-        case ButtonID.SCROLL_LAYER_SCROLL_DOWN:
+        case ControllerID.SCROLL_LAYER_SCROLL_DOWN:
             layer_select.onLayerScrollDown();
+            break;
+        case ControllerID.SCALE_SLIDER:
+            canvas.m_brush_scale = (int)(scale_slider.getValue());
             break;
         default:
             color_select.injectControlEvent(evt);
