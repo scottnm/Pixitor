@@ -19,22 +19,45 @@ public class CanvasWindow {
         canvasBuffer.updatePixels();
         m_layers.add(new Layer(m_ctrl, canvasBuffer));
 
-        transparencyBuffer = createImage(m_width, m_height, RGB);
-        loadTransparencyGridIntoBuffer(transparencyBuffer);
+        m_transparency_buf = createImage(m_width, m_height, RGB);
+        loadTransparencyGridIntoBuffer(m_transparency_buf);
+
+        m_grid_buf = createImage(m_width, m_height, RGB);        
+        updateGridLines();
     } 
 
     void drawWindow() {
         pushStyle();
         pushMatrix();
         translate(m_pos_x, m_pos_y);
-        image(transparencyBuffer, 0, 0);
+        image(m_transparency_buf, 0, 0);
         for(Layer l : m_layers) {
             if (l.m_visible.getState()) {
                 image(l.m_image, 0, 0);
             }
         }
+        image(m_grid_buf, 0, 0);
         popMatrix();
         popStyle();
+    }
+
+    void updateGridLines() {
+        int inc = 7 * m_brush_scale;
+        for (int row = 0; row < m_height; ++row) {
+            for (int col = 0; col < m_width; ++col) {
+               m_grid_buf.set(col, row, color(0, 0, 0, 1)); 
+            }
+        }
+        for (int row = 0; row < m_height; row += inc) {
+            for (int col = 0; col < m_width; ++col) {
+               m_grid_buf.set(col, row, color(0)); 
+            }
+        }
+        for (int row = 0; row < m_height; ++row) {
+            for (int col = 0; col < m_width; col += inc) {
+               m_grid_buf.set(col, row, color(0)); 
+            }
+        }
     }
     
     boolean withinWindow(int x, int y) {
@@ -94,7 +117,8 @@ public class CanvasWindow {
     }
 
     private ControlP5 m_ctrl;
-    private PImage transparencyBuffer;
+    private PImage m_transparency_buf;
+    private PImage m_grid_buf;
     public ArrayList<Layer> m_layers;
     public int m_active_layer;
     public int m_brush_scale;

@@ -77,6 +77,7 @@ void controlEvent(ControlEvent evt) {
             break;
         case ControllerID.SCALE_SLIDER:
             canvas.m_brush_scale = (int)(scale_slider.getValue());
+            canvas.updateGridLines();
             break;
         default:
             color_select.injectControlEvent(evt);
