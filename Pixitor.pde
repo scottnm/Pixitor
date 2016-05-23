@@ -45,6 +45,7 @@ void draw() {
     fill(color(200));
     rect(0,0,800,700);
     color_select.drawWindow();
+    canvas.m_pixel_preview = pen_selected ? color_select.getColor() : color(0, 0, 0, 1);
     canvas.drawWindow();
     layer_select.drawWindow();
 }
@@ -114,6 +115,5 @@ void controlEvent(ControlEvent evt) {
 }
 
 void toolSelect(int selectedTool) {
-    println("Radio Button selected: " + selectedTool);
     pen_selected = selectedTool == 0;
 }

@@ -8,10 +8,11 @@ public class CanvasWindow {
 
         m_layers = new ArrayList<Layer>();
         m_active_layer = 0;
+        m_pixel_preview = color(0);
 
         m_brush_scale = 1;
 
-        PImage canvasBuffer = createImage(m_width, m_height, RGB);
+        PImage canvasBuffer = createImage(m_width, m_height, ARGB);
         canvasBuffer.loadPixels();
         for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
             canvasBuffer.pixels[i] = color(0,0,0,1);
@@ -19,10 +20,10 @@ public class CanvasWindow {
         canvasBuffer.updatePixels();
         m_layers.add(new Layer(m_ctrl, canvasBuffer));
 
-        m_transparency_buf = createImage(m_width, m_height, RGB);
+        m_transparency_buf = createImage(m_width, m_height, ARGB);
         loadTransparencyGridIntoBuffer(m_transparency_buf);
 
-        m_grid_buf = createImage(m_width, m_height, RGB);        
+        m_grid_buf = createImage(m_width, m_height, ARGB);        
         updateGridLines();
         m_grid_active = true;
     } 
@@ -32,13 +33,32 @@ public class CanvasWindow {
         pushMatrix();
         translate(m_pos_x, m_pos_y);
         image(m_transparency_buf, 0, 0);
-        for(Layer l : m_layers) {
-            if (l.m_visible.getState()) {
-                image(l.m_image, 0, 0);
+
+        if (withinWindow(mouseX, mouseY)) {
+            int localx = (mouseX - m_pos_x) / (7 * m_brush_scale);
+            int localy = (mouseY - m_pos_y) / (7 * m_brush_scale);
+            LayerSave save = new LayerSave(
+                    m_layers.get(m_active_layer).m_image, localx, localy, m_brush_scale);
+            paint(m_layers.get(m_active_layer).m_image, mouseX, mouseY, m_pixel_preview);
+            for(Layer l : m_layers) {
+                if (l.m_visible.getState()) {
+                    image(l.m_image, 0, 0);
+                }
             }
+            if (m_grid_active) {
+                image(m_grid_buf, 0, 0);
+            }
+            save.restore(m_layers.get(m_active_layer).m_image);
         }
-        if (m_grid_active) {
-            image(m_grid_buf, 0, 0);
+        else {
+            for(Layer l : m_layers) {
+                if (l.m_visible.getState()) {
+                    image(l.m_image, 0, 0);
+                }
+            }
+            if (m_grid_active) {
+                image(m_grid_buf, 0, 0);
+            }
         }
         popMatrix();
         popStyle();
@@ -75,8 +95,14 @@ public class CanvasWindow {
             localx, localy, m_brush_scale, c);
     }
 
+    void paint(PImage buf, int x, int y, color c) {
+        int localx = (x - m_pos_x) / (7 * m_brush_scale);
+        int localy = (y - m_pos_y) / (7 * m_brush_scale);
+        draw7x7square(buf, localx, localy, m_brush_scale, c);
+    }
+
     void addColoredLayer(color c) {
-        PImage canvasBuffer = createImage(m_width, m_height, RGB);
+        PImage canvasBuffer = createImage(m_width, m_height, ARGB);
         canvasBuffer.loadPixels();
         for(int i = 0; i < canvasBuffer.pixels.length; ++i) {
             canvasBuffer.pixels[i] = c;
@@ -119,6 +145,42 @@ public class CanvasWindow {
         }
     }
 
+    private class LayerSave {
+        LayerSave(PImage buf, int x, int y, int scale) {
+            int gridlock = 7 * scale;
+
+            lx = x * gridlock;
+            ux = (x + 1) * gridlock;
+            ly = y * gridlock;
+            uy = (y + 1) * gridlock;
+
+            int num_cols = ux - lx;
+            int num_rows = uy - ly;
+            save_buf = new color[num_cols * num_rows];
+            for (int r = 0; r < num_rows; ++r) {
+                for (int c = 0; c < num_cols; ++c) {
+                    save_buf[r * num_cols + c] = buf.get(c + lx, r + ly);
+                }
+            }
+        }
+
+        void restore(PImage buf) {
+            int num_cols = ux - lx;
+            int num_rows = uy - ly;
+            for (int r = 0; r < num_rows; ++r) {
+                for (int c = 0; c < num_cols; ++c) {
+                    buf.set(c + lx, r + ly, save_buf[r * num_cols + c]);
+                }
+            }
+        }
+
+        private int lx;
+        private int ux;
+        private int ly;
+        private int uy;
+        private color[] save_buf;
+    }
+
     private ControlP5 m_ctrl;
     private PImage m_transparency_buf;
     private PImage m_grid_buf;
@@ -126,6 +188,7 @@ public class CanvasWindow {
     public ArrayList<Layer> m_layers;
     public int m_active_layer;
     public int m_brush_scale;
+    public color m_pixel_preview;
 
     private int m_pos_x;
     private int m_pos_y;
