@@ -8,6 +8,7 @@ Slider scale_slider;
 Button new_layer_button;
 RadioButton tool_select;
 Toggle grid_line_toggle;
+Button render_btn;
 
 boolean pen_selected;
 
@@ -39,6 +40,9 @@ void setup() {
         .setNoneSelectedAllowed(false);
     tool_select.activate(0);
     pen_selected = true;
+    render_btn = ctrl.addButton("flatRender")
+        .setPosition(20, 550)
+        .setCaptionLabel("Render");
 }
 
 void draw() {
@@ -116,12 +120,6 @@ void controlEvent(ControlEvent evt) {
 
 void toolSelect(int selectedTool) {
     pen_selected = selectedTool == 0;
-}
-
-void keyPressed() {
-    if (key == 's') {
-        flatRender();
-    }
 }
 
 void flatRender() {
