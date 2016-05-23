@@ -119,6 +119,12 @@ public class CanvasWindow {
         m_layers.add(new Layer(m_ctrl, canvasBuffer));
     }
 
+    void addImageLayer(String s) {
+        PImage imageBuffer = loadImage(s);
+        imageBuffer.resize(m_width, m_height);
+        m_layers.add(new Layer(m_ctrl, imageBuffer));
+    }
+
     private void loadTransparencyGridIntoBuffer(PImage buf) {
         color onColor;
         color offColor;

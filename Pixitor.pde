@@ -9,6 +9,7 @@ Button new_layer_button;
 RadioButton tool_select;
 Toggle grid_line_toggle;
 Button render_btn;
+Button load_file_btn;
 
 boolean pen_selected;
 
@@ -43,6 +44,9 @@ void setup() {
     render_btn = ctrl.addButton("flatRender")
         .setPosition(20, 550)
         .setCaptionLabel("Render");
+    load_file_btn = ctrl.addButton("loadFile")
+        .setPosition(20, 600)
+        .setCaptionLabel("Load image");
 }
 
 void draw() {
@@ -129,4 +133,13 @@ void flatRender() {
     pg.endDraw();
     pg.save("renders/render.png");
     println("Render finished");
+}
+
+void loadFile() {
+    selectInput("Select an image to load to a layer:",
+            "loadFileCallback");
+}
+
+void loadFileCallback(File selection) {
+    canvas.addImageLayer(selection.getAbsolutePath());
 }
