@@ -64,6 +64,14 @@ public class CanvasWindow {
         popStyle();
     }
 
+    void renderWindow(PGraphics render_target) {
+        for(Layer l : m_layers) {
+            if (l.m_visible.getState()) {
+                render_target.image(l.m_image, 0, 0);
+            }
+        }
+    }
+
     void updateGridLines() {
         int inc = 7 * m_brush_scale;
         for (int row = 0; row < m_height; ++row) {

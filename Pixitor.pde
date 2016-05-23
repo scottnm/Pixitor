@@ -117,3 +117,18 @@ void controlEvent(ControlEvent evt) {
 void toolSelect(int selectedTool) {
     pen_selected = selectedTool == 0;
 }
+
+void keyPressed() {
+    if (key == 's') {
+        flatRender();
+    }
+}
+
+void flatRender() {
+    PGraphics pg = createGraphics(700, 700);
+    pg.beginDraw();
+    canvas.renderWindow(pg);
+    pg.endDraw();
+    pg.save("renders/render.png");
+    println("Render finished");
+}
