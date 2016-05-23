@@ -6,8 +6,8 @@ CanvasWindow canvas;
 LayerSelectWindow layer_select;
 Slider scale_slider;
 Button new_layer_button;
+RadioButton tool_select;
 Toggle grid_line_toggle;
-static color empty;
 
 void setup() {
     size(900, 700);
@@ -29,11 +29,17 @@ void setup() {
         .setState(true)
         .setPosition(43, 500)
         .setId(ControllerID.TOGGLE_GRID);
-    empty = color(200);
+    tool_select  = ctrl.addRadioButton("Tools")
+        .setPosition(20, 400)
+        .setSize(15, 15)
+        .addItem("Draw", 0)
+        .addItem("Erase", 1)
+        .setNoneSelectedAllowed(false);
+    tool_select.activate(0);
 }
 
 void draw() {
-    fill(empty);
+    fill(color(200));
     rect(0,0,800,700);
     color_select.drawWindow();
     canvas.drawWindow();
