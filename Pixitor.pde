@@ -142,4 +142,5 @@ void loadFile() {
 
 void loadFileCallback(File selection) {
     canvas.addImageLayer(selection.getAbsolutePath());
+    layer_select.onNewLayer();
 }
