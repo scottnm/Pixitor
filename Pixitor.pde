@@ -9,6 +9,8 @@ Button new_layer_button;
 RadioButton tool_select;
 Toggle grid_line_toggle;
 
+boolean pen_selected;
+
 void setup() {
     size(900, 700);
     ctrl = new ControlP5(this);
@@ -29,13 +31,14 @@ void setup() {
         .setState(true)
         .setPosition(43, 500)
         .setId(ControllerID.TOGGLE_GRID);
-    tool_select  = ctrl.addRadioButton("Tools")
+    tool_select  = ctrl.addRadioButton("toolSelect")
         .setPosition(20, 400)
         .setSize(15, 15)
         .addItem("Draw", 0)
         .addItem("Erase", 1)
         .setNoneSelectedAllowed(false);
     tool_select.activate(0);
+    pen_selected = true;
 }
 
 void draw() {
@@ -48,7 +51,8 @@ void draw() {
 
 void mousePressed() {
     if (canvas.withinWindow(mouseX, mouseY)) {
-        canvas.paint(mouseX, mouseY, color_select.getColor());
+        canvas.paint(mouseX, mouseY,
+                pen_selected ? color_select.getColor() : color(0, 0, 0, 1));
     }
     else if (layer_select.withinWindow(mouseX, mouseY)) {
         int layer = layer_select.getLayerAt(mouseY);
@@ -63,11 +67,20 @@ void mouseDragged() {
     if (canvas.withinWindow(pmouseX, pmouseY)) {
         int del_x = mouseX - pmouseX;
         int del_y = mouseY - pmouseY;
-        color c = color_select.getColor();
-        for(int r = 1; r <= 20; ++r) {
-            int xt = ((del_x * r) / 20) + (pmouseX);
-            int yt = ((del_y * r) / 20) + (pmouseY);
-            canvas.paint(xt, yt, c);
+        if (pen_selected) {
+            color c = color_select.getColor();
+            for(int r = 1; r <= 20; ++r) {
+                int xt = ((del_x * r) / 20) + (pmouseX);
+                int yt = ((del_y * r) / 20) + (pmouseY);
+                canvas.paint(xt, yt, c);
+            }
+        }
+        else {
+            for(int r = 1; r <= 20; ++r) {
+                int xt = ((del_x * r) / 20) + (pmouseX);
+                int yt = ((del_y * r) / 20) + (pmouseY);
+                canvas.paint(xt, yt, color(0, 0, 0, 1));
+            }
         }
     }
 }
@@ -98,4 +111,9 @@ void controlEvent(ControlEvent evt) {
             color_select.injectControlEvent(evt);
             break;
     }
+}
+
+void toolSelect(int selectedTool) {
+    println("Radio Button selected: " + selectedTool);
+    pen_selected = selectedTool == 0;
 }
