@@ -88,10 +88,12 @@ public class CanvasWindow {
     }
 
     void paint(int x, int y, color c) {
-        int localx = (x - m_pos_x) / (7 * m_brush_scale);
-        int localy = (y - m_pos_y) / (7 * m_brush_scale);
-        draw7x7square(m_layerlist.getActiveLayer().m_image,
-            localx, localy, m_brush_scale, c);
+        if (m_layerlist.size() > 0) {
+            int localx = (x - m_pos_x) / (7 * m_brush_scale);
+            int localy = (y - m_pos_y) / (7 * m_brush_scale);
+            draw7x7square(m_layerlist.getActiveLayer().m_image,
+                localx, localy, m_brush_scale, c);
+        }
     }
 
     void paint(PImage buf, int x, int y, color c) {

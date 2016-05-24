@@ -7,15 +7,24 @@ class LayerList {
     }
  
     void add(Layer l) {
+        if (m_layers.size() == 0) {
+            m_active_layer = 0;
+        }
         m_layers.add(l);
     }
 
     void remove(Layer l) {
         m_layers.remove(l);
+        if (m_active_layer >= m_layers.size()) {
+            m_active_layer = m_layers.size() - 1;
+        }
     }
 
     void remove(int i) {
         m_layers.remove(i);
+        if (m_active_layer >= m_layers.size()) {
+            m_active_layer = m_layers.size() - 1;
+        }
     }
 
     int size() {
