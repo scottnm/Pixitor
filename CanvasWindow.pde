@@ -40,39 +40,27 @@ public class CanvasWindow {
             LayerSave save = new LayerSave(
                     m_layers.get(m_active_layer).m_image, localx, localy, m_brush_scale);
             paint(m_layers.get(m_active_layer).m_image, mouseX, mouseY, m_pixel_preview);
-            for(Layer l : m_layers) {
-                if (l.m_visible.getState()) {
-                    image(l.m_image,
-                          (m_width - l.m_image.width) / 2,
-                          (m_height - l.m_image.height) / 2);
-                }
-            }
-            if (m_grid_active) {
-                image(m_grid_buf, 0, 0);
-            }
+            renderWindow(g, m_grid_active);
             save.restore(m_layers.get(m_active_layer).m_image);
         }
         else {
-            for(Layer l : m_layers) {
-                if (l.m_visible.getState()) {
-                    image(l.m_image,
-                          (m_width - l.m_image.width) / 2,
-                          (m_height - l.m_image.height) / 2);
-                }
-            }
-            if (m_grid_active) {
-                image(m_grid_buf, 0, 0);
-            }
+            renderWindow(g, m_grid_active);
         }
+
         popMatrix();
         popStyle();
     }
 
-    void renderWindow(PGraphics render_target) {
+    void renderWindow(PGraphics render_target, boolean renderGrid) {
         for(Layer l : m_layers) {
             if (l.m_visible.getState()) {
-                render_target.image(l.m_image, 0, 0);
+                render_target.image(l.m_image,
+                          (m_width - l.m_image.width) / 2,
+                          (m_height - l.m_image.height) / 2);
             }
+        }
+        if (renderGrid) {
+            render_target.image(m_grid_buf, 0, 0);
         }
     }
 

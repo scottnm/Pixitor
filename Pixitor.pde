@@ -129,7 +129,7 @@ void toolSelect(int selectedTool) {
 void flatRender() {
     PGraphics pg = createGraphics(700, 700);
     pg.beginDraw();
-    canvas.renderWindow(pg);
+    canvas.renderWindow(pg, false);
     pg.endDraw();
     pg.save("renders/render.png");
     println("Render finished");
