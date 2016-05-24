@@ -42,7 +42,9 @@ public class CanvasWindow {
             paint(m_layers.get(m_active_layer).m_image, mouseX, mouseY, m_pixel_preview);
             for(Layer l : m_layers) {
                 if (l.m_visible.getState()) {
-                    image(l.m_image, 0, 0);
+                    image(l.m_image,
+                          (m_width - l.m_image.width) / 2,
+                          (m_height - l.m_image.height) / 2);
                 }
             }
             if (m_grid_active) {
@@ -53,7 +55,9 @@ public class CanvasWindow {
         else {
             for(Layer l : m_layers) {
                 if (l.m_visible.getState()) {
-                    image(l.m_image, 0, 0);
+                    image(l.m_image,
+                          (m_width - l.m_image.width) / 2,
+                          (m_height - l.m_image.height) / 2);
                 }
             }
             if (m_grid_active) {
@@ -121,7 +125,12 @@ public class CanvasWindow {
 
     void addImageLayer(String s) {
         PImage imageBuffer = loadImage(s);
-        imageBuffer.resize(m_width, m_height);
+        if (imageBuffer.width > imageBuffer.height) {
+            imageBuffer.resize(m_width, 0);
+        }
+        else {
+            imageBuffer.resize(0, m_height);
+        }
         m_layers.add(new Layer(m_ctrl, imageBuffer));
     }
 
