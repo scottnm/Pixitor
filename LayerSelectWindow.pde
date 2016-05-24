@@ -4,6 +4,7 @@ public class LayerSelectWindow {
     LayerSelectWindow(ControlP5 cp5, ArrayList<Layer> layers, int pos_x, int pos_y, int _width, int _height) {
         m_ctrl = cp5;
         m_layers = layers;
+        m_id_layer_map = new HashMap<String, Layer>();
         m_pos_x = pos_x;
         m_pos_y = pos_y;
         m_width = _width;
@@ -60,13 +61,31 @@ public class LayerSelectWindow {
     }
 
     void onNewLayer() {
-        // 1/5 of the size of a single layer window
         updateScrollButtons();
+        final int size = (m_height - m_scroll_up_btn.getHeight() -
+                m_scroll_down_btn.getHeight()) / 40;
+        Layer new_layer = m_layers.get(m_layers.size() - 1);
+        new_layer.m_visible.setSize(size, size);
+        new_layer.m_delete_btn.setSize(size, size);
+        m_id_layer_map.put(new_layer.m_delete_btn.getName(), new_layer);
+        updateLayerGUI();
+    }
 
-        final int size = (m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight()) / 40;
-        m_layers.get(m_layers.size() - 1).m_visible.setSize(size, size);
+    void deleteLayer(String name) {
+        int index = m_layers.indexOf(m_id_layer_map.get(name));
+        m_layers.get(index).m_delete_btn.hide();
+        m_layers.get(index).m_visible.hide();
+        m_layers.remove(index);
+        m_id_layer_map.remove(name);
 
-        updateToggles();
+        // handle deleting causing excess space at the bottom of the layer select
+        if (m_layers.size() >= 4 &&
+                (m_layers.size() - m_top_layer_index) < 4) {
+            onLayerScrollUp();
+        }
+
+        updateScrollButtons();
+        updateLayerGUI();
     }
 
     void onLayerScrollUp() {
@@ -75,7 +94,7 @@ public class LayerSelectWindow {
         }
         --m_top_layer_index;
         updateScrollButtons();
-        updateToggles();
+        updateLayerGUI();
     }
 
     void onLayerScrollDown() {
@@ -84,7 +103,7 @@ public class LayerSelectWindow {
         }
         ++m_top_layer_index;
         updateScrollButtons();
-        updateToggles();
+        updateLayerGUI();
     }
 
     void updateScrollButtons() {
@@ -97,9 +116,10 @@ public class LayerSelectWindow {
                 m_scroll_down_enabled);
     }
 
-    void updateToggles() {
+    void updateLayerGUI() {
         for(int i = 0; i < m_top_layer_index; ++i) {
             m_layers.get(i).m_visible.hide();
+            m_layers.get(i).m_delete_btn.hide();
         }
 
         final int offset = m_pos_y + m_scroll_up_btn.getHeight();
@@ -113,16 +133,19 @@ public class LayerSelectWindow {
             int index_in_window = i - m_top_layer_index;
             int cby = offset + (int)((layer_window_height * index_in_window) + (0.5 * layer_window_height) - tgl.getHeight() / 2);
             tgl.setPosition(cbx, cby);
+            m_layers.get(i).m_delete_btn.setPosition(cbx + 31, cby);
+            m_layers.get(i).m_delete_btn.show();
         }
 
         for(; i < m_layers.size(); ++i) {
             m_layers.get(i).m_visible.hide();
+            m_layers.get(i).m_delete_btn.hide();
         }
     }
 
     boolean withinWindow(int x, int y) {
         for(Layer l : m_layers) {
-            if (l.withinCheckbox(x, y)) {
+            if (l.withinCheckbox(x, y) || l.withinDeleteButton(x, y)) {
                 return false;
             }
         }
@@ -153,6 +176,7 @@ public class LayerSelectWindow {
 
     ControlP5 m_ctrl;
     ArrayList<Layer> m_layers;
+    HashMap<String, Layer> m_id_layer_map;
   
     int m_pos_x;
     int m_pos_y;

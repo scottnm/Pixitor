@@ -34,7 +34,7 @@ public class CanvasWindow {
         translate(m_pos_x, m_pos_y);
         image(m_transparency_buf, 0, 0);
 
-        if (withinWindow(mouseX, mouseY)) {
+        if (m_layers.size() > 0 && withinWindow(mouseX, mouseY)) {
             int localx = (mouseX - m_pos_x) / (7 * m_brush_scale);
             int localy = (mouseY - m_pos_y) / (7 * m_brush_scale);
             LayerSave save = new LayerSave(

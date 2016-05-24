@@ -116,6 +116,9 @@ void controlEvent(ControlEvent evt) {
         case ControllerID.TOGGLE_GRID:
             canvas.m_grid_active = grid_line_toggle.getState();
             break;
+        case ControllerID.DELETE_LAYER:
+            layer_select.deleteLayer(evt.getController().getName());
+            break;
         default:
             color_select.injectControlEvent(evt);
             break;
