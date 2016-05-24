@@ -121,18 +121,27 @@ public class LayerSelectWindow {
         }
 
         final int offset = m_pos_y + m_scroll_up_btn.getHeight();
-        final int layer_window_height = (m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight()) / 4;
+        final int layer_height = (m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight()) / 4;
         final int cbx = m_pos_x + (int)(m_width * 0.1);
 
         int i;
         for(i = m_layerlist.m_top_layer_index; i < m_layerlist.size() && i < m_layerlist.m_top_layer_index + 4; ++i) {
             Toggle tgl = m_layerlist.get(i).m_visible;
+            Button btn = m_layerlist.get(i).m_delete_btn;
             tgl.show();
-            int index_in_window = i - m_layerlist.m_top_layer_index;
-            int cby = offset + (int)((layer_window_height * index_in_window) + (0.5 * layer_window_height) - tgl.getHeight() / 2);
-            tgl.setPosition(cbx, cby);
-            m_layerlist.get(i).m_delete_btn.setPosition(cbx + 31, cby);
-            m_layerlist.get(i).m_delete_btn.show();
+            btn.show();
+
+            int panel_i = i - m_layerlist.m_top_layer_index;
+            int cby_tgl = offset +
+                    (int)((layer_height * panel_i)
+                        + (0.4 * layer_height)
+                        - (tgl.getHeight() / 2));
+            int cby_btn = offset +
+                    (int)((layer_height * panel_i)
+                        + (0.6 * layer_height)
+                        - (btn.getHeight() / 2));
+            tgl.setPosition(cbx, cby_tgl);
+            btn.setPosition(cbx, cby_btn);
         }
 
         for(; i < m_layerlist.size(); ++i) {
