@@ -53,9 +53,7 @@ public class CanvasWindow {
     void renderWindow(PGraphics render_target, boolean renderGrid) {
         for(Layer l : m_layerlist.m_layers) {
             if (l.m_visible.getState()) {
-                render_target.image(l.m_image,
-                          (m_width - l.m_image.width) / 2,
-                          (m_height - l.m_image.height) / 2);
+                render_target.image(l.m_image, 0, 0);
             }
         }
         if (renderGrid) {
