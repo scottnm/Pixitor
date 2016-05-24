@@ -18,7 +18,7 @@ void setup() {
     ctrl = new ControlP5(this);
     color_select = new ColorSelectWindow(ctrl, 0, 0, 100, 200);
     canvas = new CanvasWindow(ctrl, 100, 0, 700, 700);
-    layer_select = new LayerSelectWindow(ctrl, canvas.m_layers, 800, 0, 100, 700);
+    layer_select = new LayerSelectWindow(ctrl, canvas.m_layerlist, 800, 0, 100, 700);
     scale_slider = ctrl.addSlider("Scale", 1, 4, 1, 30, 250, 40, 100)
         .showTickMarks(true)
         .snapToTickMarks(true)
@@ -64,10 +64,9 @@ void mousePressed() {
                 pen_selected ? color_select.getColor() : color(0, 0, 0, 1));
     }
     else if (layer_select.withinWindow(mouseX, mouseY)) {
-        int layer = layer_select.getLayerAt(mouseY);
-        if (layer != -1) {
-            canvas.m_active_layer = layer;
-            layer_select.m_active_layer = layer;
+        int layer_i = layer_select.getLayerAt(mouseY);
+        if (layer_i != -2) {
+            canvas.m_layerlist.m_active_layer = layer_i;
         }
     }
 }

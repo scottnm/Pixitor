@@ -6,8 +6,7 @@ public class CanvasWindow {
         m_width = _width;
         m_height = _height;
 
-        m_layers = new ArrayList<Layer>();
-        m_active_layer = 0;
+        m_layerlist = new LayerList();
         m_pixel_preview = color(0);
 
         m_brush_scale = 1;
@@ -18,7 +17,7 @@ public class CanvasWindow {
             canvasBuffer.pixels[i] = color(0,0,0,1);
         }
         canvasBuffer.updatePixels();
-        m_layers.add(new Layer(m_ctrl, canvasBuffer));
+        m_layerlist.add(new Layer(m_ctrl, canvasBuffer));
 
         m_transparency_buf = createImage(m_width, m_height, ARGB);
         loadTransparencyGridIntoBuffer(m_transparency_buf);
@@ -34,14 +33,14 @@ public class CanvasWindow {
         translate(m_pos_x, m_pos_y);
         image(m_transparency_buf, 0, 0);
 
-        if (m_layers.size() > 0 && withinWindow(mouseX, mouseY)) {
+        if (m_layerlist.size() > 0 && withinWindow(mouseX, mouseY)) {
             int localx = (mouseX - m_pos_x) / (7 * m_brush_scale);
             int localy = (mouseY - m_pos_y) / (7 * m_brush_scale);
             LayerSave save = new LayerSave(
-                    m_layers.get(m_active_layer).m_image, localx, localy, m_brush_scale);
-            paint(m_layers.get(m_active_layer).m_image, mouseX, mouseY, m_pixel_preview);
+                    m_layerlist.getActiveLayer().m_image, localx, localy, m_brush_scale);
+            paint(m_layerlist.getActiveLayer().m_image, mouseX, mouseY, m_pixel_preview);
             renderWindow(g, m_grid_active);
-            save.restore(m_layers.get(m_active_layer).m_image);
+            save.restore(m_layerlist.getActiveLayer().m_image);
         }
         else {
             renderWindow(g, m_grid_active);
@@ -52,7 +51,7 @@ public class CanvasWindow {
     }
 
     void renderWindow(PGraphics render_target, boolean renderGrid) {
-        for(Layer l : m_layers) {
+        for(Layer l : m_layerlist.m_layers) {
             if (l.m_visible.getState()) {
                 render_target.image(l.m_image,
                           (m_width - l.m_image.width) / 2,
@@ -91,7 +90,7 @@ public class CanvasWindow {
     void paint(int x, int y, color c) {
         int localx = (x - m_pos_x) / (7 * m_brush_scale);
         int localy = (y - m_pos_y) / (7 * m_brush_scale);
-        draw7x7square(m_layers.get(m_active_layer).m_image,
+        draw7x7square(m_layerlist.getActiveLayer().m_image,
             localx, localy, m_brush_scale, c);
     }
 
@@ -108,7 +107,7 @@ public class CanvasWindow {
             canvasBuffer.pixels[i] = c;
         }
         canvasBuffer.updatePixels();
-        m_layers.add(new Layer(m_ctrl, canvasBuffer));
+        m_layerlist.add(new Layer(m_ctrl, canvasBuffer));
     }
 
     void addImageLayer(String s) {
@@ -119,7 +118,7 @@ public class CanvasWindow {
         else {
             imageBuffer.resize(0, m_height);
         }
-        m_layers.add(new Layer(m_ctrl, imageBuffer));
+        m_layerlist.add(new Layer(m_ctrl, imageBuffer));
     }
 
     private void loadTransparencyGridIntoBuffer(PImage buf) {
@@ -196,8 +195,7 @@ public class CanvasWindow {
     private PImage m_transparency_buf;
     private PImage m_grid_buf;
     public boolean m_grid_active;
-    public ArrayList<Layer> m_layers;
-    public int m_active_layer;
+    public LayerList m_layerlist;
     public int m_brush_scale;
     public color m_pixel_preview;
 

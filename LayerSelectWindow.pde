@@ -1,9 +1,9 @@
 import controlP5.*;
 
 public class LayerSelectWindow {
-    LayerSelectWindow(ControlP5 cp5, ArrayList<Layer> layers, int pos_x, int pos_y, int _width, int _height) {
+    LayerSelectWindow(ControlP5 cp5, LayerList layers, int pos_x, int pos_y, int _width, int _height) {
         m_ctrl = cp5;
-        m_layers = layers;
+        m_layerlist = layers;
         m_id_layer_map = new HashMap<String, Layer>();
         m_pos_x = pos_x;
         m_pos_y = pos_y;
@@ -32,8 +32,6 @@ public class LayerSelectWindow {
             .setId(ControllerID.SCROLL_LAYER_SCROLL_DOWN);
         m_scroll_colors.assignColorsToController(m_scroll_down_btn, false);
 
-        m_top_layer_index = 0;
-        m_active_layer = 0;
         onNewLayer();
     }
 
@@ -43,16 +41,16 @@ public class LayerSelectWindow {
         translate(m_pos_x, m_pos_y);
         fill(255);
         rect(0, 0, m_width, m_height);
-        int num_layers = m_layers.size();
-        for(int i = 0; i < 4 && i + m_top_layer_index < num_layers; ++i) {
+        int num_layers = m_layerlist.size();
+        for(int i = 0; i < 4 && i + m_layerlist.m_top_layer_index < num_layers; ++i) {
             pushMatrix();
-            PImage preview_img = m_layers.get(i + m_top_layer_index).m_image;
+            PImage preview_img = m_layerlist.getFromTop(i).m_image;
             int scaled_height = m_width * preview_img.height / preview_img.width;
             int h_offset = (int)(m_height * (i * 0.225 + 0.1625) - scaled_height * 0.5);
             translate(0, h_offset);
             image(preview_img, 0, 0, m_width, scaled_height);
-            Toggle layer_tgl = m_layers.get(i + m_top_layer_index).m_visible;
-            boolean this_layer_active = i + m_top_layer_index == m_active_layer;
+            Toggle layer_tgl = m_layerlist.getFromTop(i).m_visible;
+            boolean this_layer_active = m_layerlist.isActiveLayer(m_layerlist.topOffset(i));
             m_toggle_colors.assignColorsToController(layer_tgl, this_layer_active);
             popMatrix();
         }
@@ -64,7 +62,7 @@ public class LayerSelectWindow {
         updateScrollButtons();
         final int size = (m_height - m_scroll_up_btn.getHeight() -
                 m_scroll_down_btn.getHeight()) / 40;
-        Layer new_layer = m_layers.get(m_layers.size() - 1);
+        Layer new_layer = m_layerlist.get(m_layerlist.size() - 1);
         new_layer.m_visible.setSize(size, size);
         new_layer.m_delete_btn.setSize(size, size);
         m_id_layer_map.put(new_layer.m_delete_btn.getName(), new_layer);
@@ -72,15 +70,15 @@ public class LayerSelectWindow {
     }
 
     void deleteLayer(String name) {
-        int index = m_layers.indexOf(m_id_layer_map.get(name));
-        m_layers.get(index).m_delete_btn.hide();
-        m_layers.get(index).m_visible.hide();
-        m_layers.remove(index);
+        int index = m_layerlist.indexOf(m_id_layer_map.get(name));
+        m_layerlist.get(index).m_delete_btn.hide();
+        m_layerlist.get(index).m_visible.hide();
+        m_layerlist.remove(index);
         m_id_layer_map.remove(name);
 
         // handle deleting causing excess space at the bottom of the layer select
-        if (m_layers.size() >= 4 &&
-                (m_layers.size() - m_top_layer_index) < 4) {
+        if (m_layerlist.size() >= 4 &&
+                (m_layerlist.size() - m_layerlist.m_top_layer_index) < 4) {
             onLayerScrollUp();
         }
 
@@ -92,7 +90,7 @@ public class LayerSelectWindow {
         if (!m_scroll_up_enabled) {
             return;
         }
-        --m_top_layer_index;
+        --m_layerlist.m_top_layer_index;
         updateScrollButtons();
         updateLayerGUI();
     }
@@ -101,25 +99,25 @@ public class LayerSelectWindow {
         if (!m_scroll_down_enabled) {
             return;
         }
-        ++m_top_layer_index;
+        ++m_layerlist.m_top_layer_index;
         updateScrollButtons();
         updateLayerGUI();
     }
 
     void updateScrollButtons() {
-        m_scroll_up_enabled = m_top_layer_index != 0;
+        m_scroll_up_enabled = m_layerlist.m_top_layer_index != 0;
         m_scroll_colors.assignColorsToController(m_scroll_up_btn,
                 m_scroll_up_enabled);
 
-        m_scroll_down_enabled = ((m_layers.size() - 1) - m_top_layer_index) >= 4;
+        m_scroll_down_enabled = ((m_layerlist.size() - 1) - m_layerlist.m_top_layer_index) >= 4;
         m_scroll_colors.assignColorsToController(m_scroll_down_btn,
                 m_scroll_down_enabled);
     }
 
     void updateLayerGUI() {
-        for(int i = 0; i < m_top_layer_index; ++i) {
-            m_layers.get(i).m_visible.hide();
-            m_layers.get(i).m_delete_btn.hide();
+        for(int i = 0; i < m_layerlist.m_top_layer_index; ++i) {
+            m_layerlist.get(i).m_visible.hide();
+            m_layerlist.get(i).m_delete_btn.hide();
         }
 
         final int offset = m_pos_y + m_scroll_up_btn.getHeight();
@@ -127,24 +125,24 @@ public class LayerSelectWindow {
         final int cbx = m_pos_x + (int)(m_width * 0.1);
 
         int i;
-        for(i = m_top_layer_index; i < m_layers.size() && i < m_top_layer_index + 4; ++i) {
-            Toggle tgl = m_layers.get(i).m_visible;
+        for(i = m_layerlist.m_top_layer_index; i < m_layerlist.size() && i < m_layerlist.m_top_layer_index + 4; ++i) {
+            Toggle tgl = m_layerlist.get(i).m_visible;
             tgl.show();
-            int index_in_window = i - m_top_layer_index;
+            int index_in_window = i - m_layerlist.m_top_layer_index;
             int cby = offset + (int)((layer_window_height * index_in_window) + (0.5 * layer_window_height) - tgl.getHeight() / 2);
             tgl.setPosition(cbx, cby);
-            m_layers.get(i).m_delete_btn.setPosition(cbx + 31, cby);
-            m_layers.get(i).m_delete_btn.show();
+            m_layerlist.get(i).m_delete_btn.setPosition(cbx + 31, cby);
+            m_layerlist.get(i).m_delete_btn.show();
         }
 
-        for(; i < m_layers.size(); ++i) {
-            m_layers.get(i).m_visible.hide();
-            m_layers.get(i).m_delete_btn.hide();
+        for(; i < m_layerlist.size(); ++i) {
+            m_layerlist.get(i).m_visible.hide();
+            m_layerlist.get(i).m_delete_btn.hide();
         }
     }
 
     boolean withinWindow(int x, int y) {
-        for(Layer l : m_layers) {
+        for(Layer l : m_layerlist.m_layers) {
             if (l.withinCheckbox(x, y) || l.withinDeleteButton(x, y)) {
                 return false;
             }
@@ -156,26 +154,27 @@ public class LayerSelectWindow {
     }
 
     int getLayerAt(int y) {
-        final int inner_window_height = m_height - m_scroll_up_btn.getHeight() - m_scroll_down_btn.getHeight();
+        final int inner_window_height = m_height - m_scroll_up_btn.getHeight() -
+            m_scroll_down_btn.getHeight();
 
-        int ly = (y - m_pos_y) - m_scroll_up_btn.getHeight();
-        int lsize = m_layers.size();
-        if (ly < inner_window_height / 4) {
-            return lsize >= 1 ? m_top_layer_index : -1;
+        int y_offset = (y - m_pos_y) - m_scroll_up_btn.getHeight();
+        int lsize = m_layerlist.size();
+        if (y_offset < inner_window_height / 4) {
+            return lsize >= 1 ? m_layerlist.m_top_layer_index : -2;
         }
-        else if (ly < inner_window_height / 2) {
-            return lsize >= 2 ? m_top_layer_index + 1 : -1;
+        else if (y_offset < inner_window_height / 2) {
+            return lsize >= 2 ? m_layerlist.m_top_layer_index + 1 : -2;
         }
-        else if (ly < inner_window_height * 0.75) {
-            return lsize >= 3 ? m_top_layer_index + 2 : -1;
+        else if (y_offset < inner_window_height * 0.75) {
+            return lsize >= 3 ? m_layerlist.m_top_layer_index + 2 : -2;
         }
         else {
-            return lsize >= 4 ? m_top_layer_index + 3 : -1;
+            return lsize >= 4 ? m_layerlist.m_top_layer_index + 3 : -2;
         }
     }
 
     ControlP5 m_ctrl;
-    ArrayList<Layer> m_layers;
+    LayerList m_layerlist;
     HashMap<String, Layer> m_id_layer_map;
   
     int m_pos_x;
@@ -191,6 +190,4 @@ public class LayerSelectWindow {
     ControlP5ColorSet m_scroll_colors;
     ControlP5ColorSet m_toggle_colors;
 
-    int m_top_layer_index;
-    int m_active_layer;
 }
