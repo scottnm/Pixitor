@@ -113,14 +113,18 @@ public class CanvasWindow {
     }
 
     void addImageLayer(String s) {
-        PImage imageBuffer = loadImage(s);
-        if (imageBuffer.width > imageBuffer.height) {
-            imageBuffer.resize(m_width, 0);
+        PImage layer_buf = createImage(m_width, m_height, ARGB);
+        PImage _img = loadImage(s);
+        if (_img.width > _img.height) {
+            _img.resize(m_width, 0);
         }
         else {
-            imageBuffer.resize(0, m_height);
+            _img.resize(0, m_height);
         }
-        m_layerlist.add(new Layer(m_ctrl, imageBuffer));
+        layer_buf.copy(_img, 0, 0, _img.width, _img.height,
+                (m_width - _img.width) / 2, (m_height - _img.height) / 2,
+                _img.width, _img.height);
+        m_layerlist.add(new Layer(m_ctrl, layer_buf));
     }
 
     private void loadTransparencyGridIntoBuffer(PImage buf) {
